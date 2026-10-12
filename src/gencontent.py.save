@@ -1,0 +1,27 @@
+from markdown_blocks import markdown_to_html_node
+
+def extract_title(markdown):
+    # split a multi-lined markdown text into individual lines
+    split_markdown = markdown.split("\n")
+    for line in split_markdown:
+        # check if each line is prefixed with "# "
+        if line.startswith("# "):
+            # if so, remove the prefix "# " from the line
+            clean_prefix = line.removeprefix("# ")
+            # return the line with leading/trailing whitespaces also removed
+            return clean_prefix.strip()
+    # if no prefix "# " is detected raise exception with an error
+    raise Exception("No Heading Markdown Found")
+
+def generate_page(from_path, template_path, dest_path):
+    print(f"Generating page from {from_path} to {dest_path} using {template_path}")
+    # opens the from_path file, and saves the generated path as the variable open_from_path
+    # then reads the open file, storing the result in read_from_path
+    with open(from_path) as open_from_path:
+        read_from_path = open_from_path.read()
+    # opens the template_path file, and saves the generated path as the variable open_template_path
+    # then reads the open file, storing the result in read_template_path
+    with open(template_path) as open_template_path:
+        read_template_path = open_template_path.read()
+    # convert the markdown text stored in variable read_from_path into an html string
+    html_from_path = markdown_to_html_node(read_from_path).to_html()
