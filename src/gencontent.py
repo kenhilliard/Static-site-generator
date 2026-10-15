@@ -15,7 +15,7 @@ def extract_title(markdown):
     # if no prefix "# " is detected raise exception with an error
     raise Exception("No Heading Markdown Found")
 
-def generate_page(from_path, template_path, dest_path):
+def generate_page(from_path, template_path, dest_path, basepath):
     print(f"Generating page from {from_path} to {dest_path} using {template_path}")
     # opens the from_path file, and saves the generated path as the variable open_from_path
     # then reads the open file, storing the result in read_from_path
@@ -31,6 +31,9 @@ def generate_page(from_path, template_path, dest_path):
     html_title_from_path = extract_title(read_from_path)
     # replace the title and content placeholders in read_template_path with the converted html string (content), and extracted title (title)
     complete_html_from_path = read_template_path.replace("{{ Title }}", html_title_from_path).replace("{{ Content }}", html_from_path)
+    # replace the href and src attributes in the complete_html_from_path with the basepath provided
+    complete_html_from_path = complete_html_from_path.replace('href="/', 'href="' + basepath).replace('src="/', 'src="' + basepath)
+
     # checks if the destination folder exists
     dest_path_folder = os.path.dirname(dest_path)
     # creates the folder if it doesn't exist, exception error if folder already exists is handled by os.makedirs
@@ -39,7 +42,7 @@ def generate_page(from_path, template_path, dest_path):
     with open(dest_path, "w") as dest_path_file:
         dest_path_file.write(complete_html_from_path)
 
-def generate_pages_recursive(dir_path_content, template_path, dest_dir_path):
+def generate_pages_recursive(dir_path_content, template_path, dest_dir_path, basepath):
     # list the contents of the current path
     list_dir_path_content = os.listdir(dir_path_content)    
     for item in list_dir_path_content:
@@ -51,7 +54,7 @@ def generate_pages_recursive(dir_path_content, template_path, dest_dir_path):
         if os.path.isfile(from_path):
             dest_path = Path(dest_path).with_suffix(".html")
             # if the item is a file, generate a page using the from_path, template_path, and dest_path
-            generate_page(from_path, template_path, dest_path)
+            generate_page(from_path, template_path, dest_path, basepath)
         else:
             # if the item is a folder, recursively call the function to generate pages for the contents of the folder
-            generate_pages_recursive(from_path, template_path, dest_path)
+            generate_pages_recursive(from_path, template_path, dest_path, basepath)

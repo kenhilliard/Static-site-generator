@@ -1,7 +1,7 @@
 import os
 import shutil
 
-def delete_public(destination):
+def delete_directory(destination):
     if os.path.exists(destination):
         shutil.rmtree(destination)
 
